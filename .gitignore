@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+
+settings_secret.py
+*.sqlite3
+/static/*
