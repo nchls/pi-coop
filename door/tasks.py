@@ -133,7 +133,7 @@ def is_magnet_at_lower_sensor():
 def is_daytime():
 	pownal = api.Topos('43.921554 N', '70.147969 W')
 	ts = api.load.timescale(builtin=True)
-	eph = api.load('de421.bsp')
+	eph = api.load_file('/home/pi/skyfield-data/de421.bsp')
 	now = datetime.now().astimezone()
 	today_start = datetime(now.year, now.month, now.day).astimezone()
 	today_end = today_start + timedelta(days=1)
