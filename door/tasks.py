@@ -14,8 +14,6 @@ except django.core.exceptions.AppRegistryNotReady:
 
 log = logging.getLogger(__name__)
 
-gpio.setmode(gpio.BCM)
-
 PIN_HALL_SENSOR_UPPER = 19
 PIN_HALL_SENSOR_LOWER = 20
 PIN_MOTOR_LOGIC = 27
@@ -24,9 +22,12 @@ PIN_MOTOR_INPUT_2 = 22
 
 SENSOR_RESOLUTION_SECONDS = 0.2
 MAX_DOOR_OPENING_SECONDS = 60
+DELTA_FROM_SUNRISE = timedelta(hours=1)
+DELTA_FROM_SUNSET = timedelta(minutes=30)
 
 
 def setup_gpio():
+	gpio.setmode(gpio.BCM)
 	gpio.setup(PIN_HALL_SENSOR_UPPER, gpio.IN, pull_up_down=gpio.PUD_UP)
 	gpio.setup(PIN_HALL_SENSOR_LOWER, gpio.IN, pull_up_down=gpio.PUD_UP)
 	gpio.setup(PIN_MOTOR_LOGIC, gpio.OUT)
@@ -143,8 +144,8 @@ def is_daytime():
 	# If there are multiple sunrises in a day then we have bigger problems than opening the coop door at the right time
 	sunrise_iso = traversals[0].utc_iso() if is_sunrise[0] else traversals[1]
 	sunset_iso = traversals[1].utc_iso() if not is_sunrise[1] else traversals[0]
-	sunrise_dtm = datetime.strptime(sunrise_iso, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
-	sunset_dtm = datetime.strptime(sunset_iso, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
+	sunrise_dtm = datetime.strptime(sunrise_iso, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc) + DELTA_FROM_SUNRISE
+	sunset_dtm = datetime.strptime(sunset_iso, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc) + DELTA_FROM_SUNSET
 	return sunrise_dtm < now < sunset_dtm
 
 

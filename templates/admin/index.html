@@ -1,0 +1,72 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+	<div class="door-controls">
+		<p class="door-status">
+			Door status: <span class="value">...</span>
+		</p>
+		<div class="buttons">
+			<button type="button" disabled class="open">Open</button>
+			<button type="button" disabled class="close">Close</button>
+		</div>
+		<p class="schedule-status">
+			Auto open+close: <span class="value"></span>
+		</p>
+	</div>
+	<style>
+		.door-controls {
+			margin: 0 0 30px;
+			border: solid 1px #aaa;
+			padding: 16px;
+		}
+		.door-controls .buttons {
+			display: flex;
+		}
+		.door-controls button {
+			border: 0;
+			background: #050;
+			display: inline-block;
+			padding: 1em;
+			font-size: 2rem;
+			margin: .5em;
+			color: #fff;
+			cursor: pointer;
+		}
+		.door-controls button:disabled {
+			background: #888;
+		}
+	</style>
+	<script>
+		(function() {
+			const showFailure = (err) => {
+				console.error(err);
+				document.querySelector('.door-status .value').innerHTML = 'Error';
+			};
+
+			fetch('/door/status')
+				.then((response) => {
+					if (response.status !== 200) {
+						showFailure();
+						throw 'Non-200 response';
+					}
+					return response.json();
+				})
+				.then((response) => {
+					document.querySelector('.door-status .value').innerHTML = response.doorStatus;
+					if (['INDETERMINATE', 'CLOSED'].includes(response.doorStatus)) {
+						document.querySelector('.door-controls .open').removeAttribute('disabled');
+					}
+					if (['INDETERMINATE', 'OPEN'].includes(response.doorStatus)) {
+						document.querySelector('.door-controls .close').removeAttribute('disabled');
+					}
+					if (response.isAutoOpenCloseEnabled) {
+						document.querySelector('.schedule-status .value').innerHTML = 'Enabled';
+					} else {
+						document.querySelector('.schedule-status .value').innerHTML = 'Disabled';
+					}
+				})
+				.catch(showFailure);
+		}());
+	</script>
+	{{ block.super }}
+{% endblock content %}
