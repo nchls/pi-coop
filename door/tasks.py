@@ -37,15 +37,9 @@ def setup_gpio():
 
 def uses_gpio(fn):
 	def wrapper(*args, **kwargs):
-		if __name__ == '__main__':
-			return fn(*args, **kwargs)
-		setup_gpio()
-		try:
-			return fn(*args, **kwargs)
-		except Exception as exc:
-			log.exception(exc)
-		finally:
-			gpio.cleanup()
+		if gpio.getmode() is None:
+			setup_gpio()
+		return fn(*args, **kwargs)
 	return wrapper
 
 
@@ -59,37 +53,49 @@ def job():
 
 
 def open_door():
-	if is_door_open():
-		log.error('Door is already open')
-		return False
-	set_motor_clockwise()
-	start_time = time.perf_counter()
-	while True:
-		time.sleep(SENSOR_RESOLUTION_SECONDS)
+	try:
 		if is_door_open():
-			turn_off_motor()
-			return True
-		if (time.perf_counter() - start_time) > MAX_DOOR_OPENING_SECONDS:
-			turn_off_motor()
-			log.error('Door did not open in time! Something is wrong...')
+			log.error('Door is already open')
 			return False
+		set_motor_clockwise()
+		start_time = time.perf_counter()
+		while True:
+			time.sleep(SENSOR_RESOLUTION_SECONDS)
+			if is_door_open():
+				turn_off_motor()
+				return True
+			if (time.perf_counter() - start_time) > MAX_DOOR_OPENING_SECONDS:
+				turn_off_motor()
+				log.error('Door did not open in time! Something is wrong...')
+				return False
+	except Exception as exc:
+		log.exception(exc)
+		return False
+	finally:
+		gpio.cleanup()
 
 
 def close_door():
-	if is_door_closed():
-		log.error('Door is already closed')
-		return False
-	set_motor_counterclockwise()
-	start_time = time.perf_counter()
-	while True:
-		time.sleep(SENSOR_RESOLUTION_SECONDS)
+	try:
 		if is_door_closed():
-			turn_off_motor()
-			return True
-		if (time.perf_counter() - start_time) > MAX_DOOR_OPENING_SECONDS:
-			turn_off_motor()
-			log.error('Door did not close in time! Something is wrong...')
+			log.error('Door is already closed')
 			return False
+		set_motor_counterclockwise()
+		start_time = time.perf_counter()
+		while True:
+			time.sleep(SENSOR_RESOLUTION_SECONDS)
+			if is_door_closed():
+				turn_off_motor()
+				return True
+			if (time.perf_counter() - start_time) > MAX_DOOR_OPENING_SECONDS:
+				turn_off_motor()
+				log.error('Door did not close in time! Something is wrong...')
+				return False
+	except Exception as exc:
+		log.exception(exc)
+		return False
+	finally:
+		gpio.cleanup()
 
 
 @uses_gpio
@@ -150,13 +156,13 @@ def is_daytime():
 
 
 if __name__ == '__main__':
-	setup_gpio()
+	django.setup()
+	from door.models import Config, State, Fault
 	try:
-		django.setup()
-		from door.models import Config, State, Fault
 		job()
 	except Exception as exc:
 		log.exception(exc)
 	finally:
 		gpio.cleanup()
+
 
