@@ -1,6 +1,5 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
 
 from door.models import Config
 from door.tasks import is_door_open, is_door_closed, open_door, close_door
