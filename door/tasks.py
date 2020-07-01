@@ -138,6 +138,14 @@ def is_magnet_at_lower_sensor():
 
 
 def is_daytime():
+	now = datetime.now().astimezone()
+	sunrise_dtm, sunset_dtm = get_sunrise_sunset_times()
+	start = sunrise_dtm + DELTA_FROM_SUNRISE
+	end = sunset_dtm + DELTA_FROM_SUNSET
+	return start < now < end
+
+
+def get_sunrise_sunset_times():
 	pownal = api.Topos('43.921554 N', '70.147969 W')
 	ts = api.load.timescale(builtin=True)
 	eph = api.load_file('/home/pi/skyfield-data/de421.bsp')
@@ -150,9 +158,9 @@ def is_daytime():
 	# If there are multiple sunrises in a day then we have bigger problems than opening the coop door at the right time
 	sunrise_iso = traversals[0].utc_iso() if is_sunrise[0] else traversals[1]
 	sunset_iso = traversals[1].utc_iso() if not is_sunrise[1] else traversals[0]
-	sunrise_dtm = datetime.strptime(sunrise_iso, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc) + DELTA_FROM_SUNRISE
-	sunset_dtm = datetime.strptime(sunset_iso, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc) + DELTA_FROM_SUNSET
-	return sunrise_dtm < now < sunset_dtm
+	sunrise_dtm = datetime.strptime(sunrise_iso, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc).astimezone()
+	sunset_dtm = datetime.strptime(sunset_iso, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc).astimezone()
+	return (sunrise_dtm, sunset_dtm)
 
 
 if __name__ == '__main__':
