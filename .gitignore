@@ -5,3 +5,5 @@ settings_secret.py
 *.sqlite3
 /static/*
 *.bsp
+
+.vscode

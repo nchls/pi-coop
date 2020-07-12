@@ -44,12 +44,13 @@ def uses_gpio(fn):
 
 
 def job():
-	if is_daytime():
-		if is_door_closed():
-			open_door()
-	else:
-		if is_door_open():
-			close_door()
+	if Fault.objects.filter(is_resolved=False).first() is None:
+		if is_daytime():
+			if is_door_closed():
+				open_door()
+		else:
+			if is_door_open():
+				close_door()
 
 
 def open_door():
