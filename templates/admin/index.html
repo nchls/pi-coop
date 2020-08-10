@@ -1,5 +1,15 @@
 {% extends "admin/index.html" %}
 
+{% block extrahead %}
+	<link rel="apple-touch-icon" sizes="180x180" href="/static/images/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/static/images/favicon-16x16.png">
+{% endblock extrahead %}
+
+{% block branding %}
+	<h1 id="site-name"><a href="{% url 'admin:index' %}">Fowl's Moving Castle</a></h1>
+{% endblock branding %}
+
 {% block content %}
 	<div id="vue-app">
 		<p class="error" v-if="fetchError">
@@ -17,7 +27,14 @@
 			<p class="door-status">
 				Door status: <span class="value">[[ doorStatus ]]</span>
 			</p>
+			<p class="schedule-status">
+				Auto open+close: <span class="value">[[ isAutoOpenCloseEnabled ? 'Enabled' : 'Disabled' ]]</span>
+			</p>
+			<p class="door-closing-time">
+				Tonight's scheduled closing time: [[ doorClosingTime ]]
+			</p>
 			<div class="buttons">
+				<!--
 				<button 
 					type="button" 
 					v-bind:disabled="['CLOSED', 'INDETERMINATE'].includes(doorStatus) ? false : 'disabled'" 
@@ -32,10 +49,29 @@
 				>
 					Close
 				</button>
+				-->
+				<button 
+					type="button" 
+					class="up"
+					v-on:click="motorUp"
+				>
+					☝️
+				</button>
+				<button 
+					type="button" 
+					class="down"
+					v-on:click="motorDown"
+				>
+					👇
+				</button>
+				<button 
+					type="button" 
+					class="off"
+					v-on:click="motorOff"
+				>
+					✋
+				</button>
 			</div>
-			<p class="schedule-status">
-				Auto open+close: <span class="value">[[ isAutoOpenCloseEnabled ? 'Enabled' : 'Disabled' ]]</span>
-			</p>
 		</div>
 	</div>
 	<style>
@@ -46,14 +82,15 @@
 		}
 		.door-controls .buttons {
 			display: flex;
+			justify-content: space-evenly;
 		}
 		.door-controls button {
 			border: 0;
 			background: #050;
 			display: inline-block;
-			padding: 1em;
+			padding: .5em;
 			font-size: 2rem;
-			margin: .5em;
+			margin: .5em .1em;
 			color: #fff;
 			cursor: pointer;
 		}
@@ -71,28 +108,92 @@
 					fetchError: undefined,
 					isAutoOpenCloseEnabled: undefined,
 					doorStatus: undefined,
+					doorClosingTime: undefined,
 					piTemperature: undefined,
 					piUptime: undefined,
 					piMemoryPercent: undefined,
 					piSwapPercent: undefined,
 					piLoadAverages: [undefined, undefined, undefined]
+				},
+				methods: {
+					motorUp: () => {
+						fetch('/door/up')
+							.then((response) => {
+								if (response.status !== 200) {
+									App.fetchError = true;
+									throw 'Non-200 response';
+								}
+								return response.json();
+							})
+							.then((response) => {
+
+							})
+							.catch((err) => {
+								App.fetchError = true;
+								throw 'Request exception';
+								console.error(err);
+							});
+					},
+					motorDown: () => {
+						fetch('/door/down')
+							.then((response) => {
+								if (response.status !== 200) {
+									App.fetchError = true;
+									throw 'Non-200 response';
+								}
+								return response.json();
+							})
+							.then((response) => {
+
+							})
+							.catch((err) => {
+								App.fetchError = true;
+								throw 'Request exception';
+								console.error(err);
+							});
+					},
+					motorOff: () => {
+						fetch('/door/off')
+							.then((response) => {
+								if (response.status !== 200) {
+									App.fetchError = true;
+									throw 'Non-200 response';
+								}
+								return response.json();
+							})
+							.then((response) => {
+
+							})
+							.catch((err) => {
+								App.fetchError = true;
+								throw 'Request exception';
+								console.error(err);
+							});					
+					}
 				}
 			});
 
-			fetch('/door/status')
-				.then((response) => {
-					if (response.status !== 200) {
+			const updateDoorStatus = () => {
+				fetch('/door/status')
+					.then((response) => {
+						if (response.status !== 200) {
+							App.fetchError = true;
+							throw 'Non-200 response';
+						}
+						return response.json();
+					})
+					.then((response) => {
+						App.doorStatus = response.doorStatus;
+						App.isAutoOpenCloseEnabled = response.isAutoOpenCloseEnabled;
+						App.doorClosingTime = response.closingTime;
+					})
+					.catch((err) => {
 						App.fetchError = true;
-						throw 'Non-200 response';
-					}
-					return response.json();
-				})
-				.then((response) => {
-					App.doorStatus = response.doorStatus;
-					App.isAutoOpenCloseEnabled = response.isAutoOpenCloseEnabled;
-				})
-				.catch(console.error);
-
+						throw 'Request exception';
+						console.error(err);
+					});
+			};
+			
 			const updatePiStatus = () => {
 				fetch('/pi/status')
 					.then((response) => {
@@ -109,11 +210,17 @@
 						App.piSwapPercent = response.swapPercent;
 						App.piLoadAverages = response.loadAverages;
 					})
-					.catch(console.error);
+					.catch((err) => {
+						App.fetchError = true;
+						throw 'Request exception';
+						console.error(err);
+					});
 			};
 
 			updatePiStatus();
+			updateDoorStatus();
 			window.setInterval(updatePiStatus, 3000);
+			//window.setInterval(updateDoorStatus, 9000);
 		}());
 	</script>
 	{{ block.super }}
