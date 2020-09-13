@@ -78,11 +78,16 @@ LOGGING = {
 			'filename': '/var/log/coop/coop.log',
 			'formatter': 'verbose',
 		},
+		'sms': {
+			'level': 'ERROR',
+			'class': 'coop.alerts.TextMessageAlertHandler',
+		},
 	},
 	'root': {
 		'handlers': [
 			'console',
 			'file',
+			'sms',
 		],
 		'level': 'INFO',
 	},
