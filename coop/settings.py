@@ -73,7 +73,7 @@ LOGGING = {
 			'formatter': 'simple',
 		},
 		'file': {
-			'level': 'WARNING',
+			'level': 'INFO',
 			'class': 'logging.FileHandler',
 			'filename': '/var/log/coop/coop.log',
 			'formatter': 'verbose',

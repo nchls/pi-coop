@@ -16,6 +16,7 @@ class Config(BaseModel, SingletonModel):
 
 class State(BaseModel, SingletonModel):
     is_moving = models.BooleanField(default=False)
+    is_manually_closed = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Door state'

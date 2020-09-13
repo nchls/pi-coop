@@ -58,14 +58,14 @@ def close_door(request):
 
 @staff_member_required
 def motor_up(request):
-	set_motor_counterclockwise()
+	set_motor_clockwise()
 	return JsonResponse({
 		'success': True,
 	})
 
 @staff_member_required
 def motor_down(request):
-	set_motor_clockwise()
+	set_motor_counterclockwise()
 	return JsonResponse({
 		'success': True,
 	})

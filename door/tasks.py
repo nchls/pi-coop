@@ -9,7 +9,7 @@ from skyfield import almanac, api
 try:
 	# This will work when the functions are imported from a Django module, but not when the script is run
 	from door.models import Config, State, Fault
-except django.core.exceptions.AppRegistryNotReady:
+except (django.core.exceptions.AppRegistryNotReady, ModuleNotFoundError):
 	pass
 
 log = logging.getLogger(__name__)
@@ -22,11 +22,12 @@ PIN_MOTOR_INPUT_2 = 22
 
 SENSOR_RESOLUTION_SECONDS = 0.2
 MAX_DOOR_OPENING_SECONDS = 60
-DELTA_FROM_SUNRISE = timedelta(hours=1)
-DELTA_FROM_SUNSET = timedelta(minutes=30)
+DELTA_FROM_SUNRISE = timedelta(minutes=1)
+DELTA_FROM_SUNSET = timedelta(minutes=45)
 
 
 def setup_gpio():
+	gpio.setwarnings(False)
 	gpio.setmode(gpio.BCM)
 	gpio.setup(PIN_HALL_SENSOR_UPPER, gpio.IN, pull_up_down=gpio.PUD_UP)
 	gpio.setup(PIN_HALL_SENSOR_LOWER, gpio.IN, pull_up_down=gpio.PUD_UP)
@@ -44,59 +45,69 @@ def uses_gpio(fn):
 
 
 def job():
-	if Fault.objects.filter(is_resolved=False).first() is None:
-		if is_daytime():
-			if is_door_closed():
-				open_door()
-		else:
-			if is_door_open():
-				close_door()
+	cfg = Config.objects.get()
+	if cfg.is_auto_open_close_enabled is False:
+		return False
+	if Fault.objects.filter(is_resolved=False).first() is not None:
+		return False
+	if is_door_closed() and is_daytime():
+		return open_door()
+	if is_door_open() and not is_daytime():
+		return close_door()
 
 
 def open_door():
+	log.info('Opening door')
 	try:
-		if is_door_open():
-			log.error('Door is already open')
+		if not is_door_closed():
+			log.error('Door is not closed; cannot open!')
 			return False
 		set_motor_clockwise()
 		start_time = time.perf_counter()
 		while True:
 			time.sleep(SENSOR_RESOLUTION_SECONDS)
-			if is_door_open():
+			if (time.perf_counter() - start_time) > 4 and is_door_closed():
+				msg = 'Door doesn\'t seem to be opening!'
+				Fault.objects.create(message=msg)
+				log.error(msg)
+				turn_off_motor()
+				return False
+			if (time.perf_counter() - start_time) > 45:
+				log.info('Completed door opening')
 				turn_off_motor()
 				return True
-			if (time.perf_counter() - start_time) > MAX_DOOR_OPENING_SECONDS:
-				turn_off_motor()
-				log.error('Door did not open in time! Something is wrong...')
-				return False
 	except Exception as exc:
-		log.exception(exc)
+		Fault.objects.create(message=f'Exception opening door! {exc}')
+		log.exception('Exception opening door!')
+		turn_off_motor()
 		return False
-	finally:
-		gpio.cleanup()
 
 
 def close_door():
+	log.info('Closing door')
 	try:
 		if is_door_closed():
-			log.error('Door is already closed')
+			log.error('Door is already closed!')
 			return False
 		set_motor_counterclockwise()
 		start_time = time.perf_counter()
 		while True:
 			time.sleep(SENSOR_RESOLUTION_SECONDS)
 			if is_door_closed():
+				log.info(f'Completed door closing in {time.perf_counter() - start_time} seconds')
 				turn_off_motor()
 				return True
-			if (time.perf_counter() - start_time) > MAX_DOOR_OPENING_SECONDS:
+			if (time.perf_counter() - start_time) > 55:
+				msg = 'Door did not trip lower sensor after 55 seconds!'
+				Fault.objects.create(message=msg)
+				log.error(msg)
 				turn_off_motor()
-				log.error('Door did not close in time! Something is wrong...')
 				return False
 	except Exception as exc:
-		log.exception(exc)
+		Fault.objects.create(message=f'Exception closing door! {exc}')
+		log.exception('Exception closing door!')
+		turn_off_motor()
 		return False
-	finally:
-		gpio.cleanup()
 
 
 @uses_gpio
@@ -121,11 +132,11 @@ def turn_off_motor():
 
 
 def is_door_open():
-	return (is_magnet_at_upper_sensor() and not is_magnet_at_lower_sensor())
+	return not is_magnet_at_lower_sensor()
 
 
 def is_door_closed():
-	return (is_magnet_at_lower_sensor() and not is_magnet_at_upper_sensor())
+	return is_magnet_at_lower_sensor()
 
 
 @uses_gpio
@@ -171,7 +182,5 @@ if __name__ == '__main__':
 		job()
 	except Exception as exc:
 		log.exception(exc)
-	finally:
-		gpio.cleanup()
 
 
