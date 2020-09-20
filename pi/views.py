@@ -20,6 +20,14 @@ def get_pi_status(request):
 	})
 
 
+def get_log(request):
+	with open('/var/log/coop/coop.log') as fl:
+		lines = fl.readlines()
+	return JsonResponse({
+		'entries': lines[-30:]
+	})
+
+
 def get_temperature():
 	temperature_raw = os.popen('vcgencmd measure_temp').readline()
 	temperature_celsius = Decimal(re.sub('[^0-9\.]', '', temperature_raw))

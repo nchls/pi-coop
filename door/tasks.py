@@ -97,8 +97,8 @@ def close_door():
 				log.info(f'Completed door closing in {time.perf_counter() - start_time} seconds')
 				turn_off_motor()
 				return True
-			if (time.perf_counter() - start_time) > 55:
-				msg = 'Door did not trip lower sensor after 55 seconds!'
+			if (time.perf_counter() - start_time) > 42:
+				msg = 'Door did not trip lower sensor after 42 seconds!'
 				Fault.objects.create(message=msg)
 				log.error(msg)
 				turn_off_motor()
@@ -168,8 +168,8 @@ def get_sunrise_sunset_times():
 	today_end_ts = ts.utc(today_end)
 	traversals, is_sunrise = almanac.find_discrete(today_start_ts, today_end_ts, almanac.sunrise_sunset(eph, pownal))
 	# If there are multiple sunrises in a day then we have bigger problems than opening the coop door at the right time
-	sunrise_iso = traversals[0].utc_iso() if is_sunrise[0] else traversals[1]
-	sunset_iso = traversals[1].utc_iso() if not is_sunrise[1] else traversals[0]
+	sunrise_iso = traversals[0].utc_iso() if is_sunrise[0] else traversals[1].utc_iso()
+	sunset_iso = traversals[1].utc_iso() if not is_sunrise[1] else traversals[0].utc_iso()
 	sunrise_dtm = datetime.strptime(sunrise_iso, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc).astimezone()
 	sunset_dtm = datetime.strptime(sunset_iso, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc).astimezone()
 	return (sunrise_dtm, sunset_dtm)
