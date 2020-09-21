@@ -9,6 +9,7 @@ urlpatterns = [
 	path('', include('public.urls')),
 	path('door/', include('door.urls')),
 	path('pi/', include('pi.urls')),
+	path('environment/', include('environment.urls')),
 	path('admin/', admin.site.urls),
 	path('favicon.ico', favicon),
 ]

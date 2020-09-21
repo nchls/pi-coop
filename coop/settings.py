@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 	'solo',
 	'door.apps.DoorConfig',
+	'environment.apps.EnvironmentConfig',
 ]
 
 MIDDLEWARE = [
