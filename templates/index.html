@@ -1,21 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<a href="{% url 'admin:index' %}" class="admin-image">
-		<img src="/static/images/judging.jpg" alt="Sophie judging the coop circuitry" width="600" height="800" />
-	</a>
-	<style>
-		body {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			height: 100vh;
-			margin: 0;
-			padding: 0;
-		}
-		.admin-image img {
-			width: auto;
-			max-height: 70vh;
-		}
-	</style>
+	<div id="app"></div>
 {% endblock content %}
+
+{% block js %}
+	<script src="/static/dashboard-dist/bundle.js"></script>
+{% endblock js %}
