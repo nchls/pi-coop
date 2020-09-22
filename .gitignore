@@ -6,5 +6,7 @@ settings_secret.py
 /static/*
 *.bsp
 task_output.txt
+dashboard/dist/*
 
 .vscode
+node_modules
