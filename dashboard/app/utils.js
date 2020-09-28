@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 
 export const useAPIPoll = (atom, endpoint, pollInterval) => {
-	const setter = useSetRecoilState(atom);
+	const [data, setter] = useRecoilState(atom);
 	useEffect(() => {
 		const update = () => {
 			const response = window.fetch(endpoint)
 				.then((response) => response.json())
 				.then((response) => {
 					setter({
-						fetched: true,
-						...response
+						...data,
+						...response,
+						fetched: true
 					});
 				});
 		};

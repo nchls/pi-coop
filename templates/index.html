@@ -6,14 +6,11 @@
 		<div class="auth">
 			{% if user.is_authenticated %}
 				<div class="logged-in-as">
-					Logged in as {{ user.username }}
+					Logged in as {{ user.username }} (<a class="log-out" href="{% url 'admin:logout' %}?next=/">log out</a>)
 				</div>
-				<a class="log-out" href="{% url 'admin:logout' %}?next=/">
-					Log Out
-				</a>
 			{% else %}
 				<a href="{% url 'admin:login' %}?next=/">
-					Log In
+					Login
 				</a>
 			{% endif %}
 		</div>

@@ -14,6 +14,7 @@ from door.tasks import (
 	set_motor_counterclockwise,
 	turn_off_motor,
 	get_sunrise_sunset_times,
+	DELTA_FROM_SUNRISE,
 	DELTA_FROM_SUNSET
 )
 
@@ -33,12 +34,14 @@ def status(request):
 
 	cfg = Config.get_solo()
 
-	_, sunset_dtm = get_sunrise_sunset_times()
-	closing_time = sunset_dtm + DELTA_FROM_SUNSET + timedelta(minutes=1)
+	sunrise_dtm, sunset_dtm = get_sunrise_sunset_times()
+	opening_time = sunrise_dtm + DELTA_FROM_SUNRISE
+	closing_time = sunset_dtm + DELTA_FROM_SUNSET
 
 	return JsonResponse({
 		'doorStatus': door_status,
 		'isAutoOpenCloseEnabled': cfg.is_auto_open_close_enabled,
+		'openingTime': opening_time.strftime('%-I:%M'),
 		'closingTime': closing_time.strftime('%-I:%M'),
 	})
 

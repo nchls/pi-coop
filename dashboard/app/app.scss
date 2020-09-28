@@ -10,6 +10,9 @@
 	display: flex;
 	justify-content: space-between;
 	padding: $global-padding;
+	h1.title {
+		margin-bottom: 0;
+	}
 }
 
 .auth {
@@ -18,4 +21,11 @@
 
 main {
 	padding: $global-padding;
+}
+
+.panels {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	column-gap: $global-padding;
+	row-gap: $global-padding;
 }
