@@ -8,6 +8,7 @@ log = logging.getLogger(__name__)
 
 def index(request):
 	template = loader.get_template('index.html')
-	context = {}
+	context = {
+		'user': request.user,
+	}
 	return HttpResponse(template.render(context, request))
-	

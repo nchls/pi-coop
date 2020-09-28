@@ -1,0 +1,21 @@
+@import '../variables.scss';
+
+*,
+*:before,
+*:after {
+	box-sizing: border-box;
+}
+
+.global-header {
+	display: flex;
+	justify-content: space-between;
+	padding: $global-padding;
+}
+
+.auth {
+	text-align: right;
+}
+
+main {
+	padding: $global-padding;
+}
