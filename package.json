@@ -28,6 +28,7 @@
     "babel-loader": "^8.1.0",
     "bulma": "^0.9.0",
     "css-loader": "^4.3.0",
+    "date-fns": "^2.16.1",
     "eslint": "^7.9.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-plugin-import": "^2.22.0",

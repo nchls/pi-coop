@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 def log_entries(request):
 	cfg = Config.get_solo()
 
-	start_time = datetime.now() + timedelta(days=-10)
+	start_time = datetime.now() + timedelta(days=-5)
 
 	temp_entries = LogEntry.objects.filter(
 		type=LogEntry.TEMPERATURE,
@@ -29,14 +29,14 @@ def log_entries(request):
 	return JsonResponse({
 		'isEnvironmentLoggingEnabled': cfg.is_environment_logging_enabled,
 		'logEntries': {
-			'temperature': list([(
-				e.created.replace(tzinfo=timezone.utc).astimezone(), e.value
-			) for e in temp_entries]),
-			'pressure': list([(
-				e.created.replace(tzinfo=timezone.utc).astimezone(), e.value
-			) for e in pres_entries]),
-			'humidity': list([(
-				e.created.replace(tzinfo=timezone.utc).astimezone(), e.value
-			) for e in humd_entries]),
+			'temperature': list(
+				(e.created.replace(tzinfo=timezone.utc).astimezone(), e.value) for e in temp_entries
+			),
+			'pressure': list(
+				(e.created.replace(tzinfo=timezone.utc).astimezone(), e.value) for e in pres_entries
+			),
+			'humidity': list(
+				(e.created.replace(tzinfo=timezone.utc).astimezone(), e.value) for e in humd_entries
+			),
 		},
 	})
