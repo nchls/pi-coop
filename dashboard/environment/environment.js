@@ -5,7 +5,6 @@ import { atom, useRecoilValue } from 'recoil';
 
 import { useAPIPoll } from '../app/utils';
 import './environment.scss';
-import { vi } from 'date-fns/esm/locale';
 
 
 const weekdays = [
@@ -26,7 +25,8 @@ export const environmentState = atom({
 		logEntries: {
 			temperature: [],
 			pressure: [],
-			humidity: []
+			humidity: [],
+			gas: [],
 		}
 	}
 });
@@ -35,13 +35,17 @@ const Environment = () => {
 	useAPIPoll(environmentState, '/environment/logs', 60000 * 10);
 	const environment = useRecoilValue(environmentState);
 
-	const [earliestTimes, latestValues] = ['temperature', 'pressure', 'humidity'].reduce((accumulator, property) => {
+	const [earliestTimes, latestValues] = ['temperature', 'pressure', 'humidity', 'gas'].reduce((accumulator, property) => {
 		if (environment.logEntries[property].length === 0) {
 			accumulator[0][property] = undefined;
 			accumulator[1][property] = undefined;
 		} else {
 			accumulator[0][property] = environment.logEntries[property][0][0];
-			accumulator[1][property] = environment.logEntries[property][environment.logEntries[property].length - 1][1];
+			let val = environment.logEntries[property][environment.logEntries[property].length - 1][1];
+			if (property === 'gas') {
+				val /= 1000;
+			}
+			accumulator[1][property] = val;
 		}
 		return accumulator;
 	}, [{}, {}]);
@@ -51,8 +55,9 @@ const Environment = () => {
 		'temperature': [],
 		'pressure': [],
 		'humidity': [],
+		'gas': [],
 	};
-	['temperature', 'pressure', 'humidity'].forEach((property) => {
+	['temperature', 'pressure', 'humidity', 'gas'].forEach((property) => {
 		const entries = environment.logEntries[property];
 		let previousDay = getDay(parseISO(earliestTimes[property]));
 		chartData[property] = entries.map((entry) => {
@@ -62,9 +67,13 @@ const Environment = () => {
 				firstInDay[property].push(ts);
 				previousDay = getDay(dt);
 			}
+			let val = entry[1];
+			if (property === 'gas') {
+				val /= 1000;
+			}
 			return {
 				x: ts,
-				y: entry[1]
+				y: val
 			};
 		});
 	});
@@ -96,7 +105,7 @@ const Environment = () => {
 					<YAxis />
 				</XYPlot>
 			</div>
-			<div className="panel-block memory-percent">
+			<div className="panel-block humidity">
 				<div>
 					Humidity: { latestValues.humidity }%
 				</div>
@@ -105,6 +114,18 @@ const Environment = () => {
 					<VerticalGridLines tickValues={firstInDay.humidity} />
 					<LineSeries data={chartData.humidity} />
 					<XAxis tickFormat={v => weekdays[getDay(fromUnixTime(v))]} tickValues={firstInDay.humidity} />
+					<YAxis />
+				</XYPlot>
+			</div>
+			<div className="panel-block gas">
+				<div>
+					Gas: { latestValues.gas } kOhms
+				</div>
+				<XYPlot width={300} height={300} yDomain={[0, 200]}>
+					<HorizontalGridLines />
+					<VerticalGridLines tickValues={firstInDay.gas} />
+					<LineSeries data={chartData.gas} />
+					<XAxis tickFormat={v => weekdays[getDay(fromUnixTime(v))]} tickValues={firstInDay.gas} />
 					<YAxis />
 				</XYPlot>
 			</div>
