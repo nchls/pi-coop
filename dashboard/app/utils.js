@@ -6,13 +6,27 @@ export const useAPIPoll = (atom, endpoint, pollInterval) => {
 	const [data, setter] = useRecoilState(atom);
 	useEffect(() => {
 		const update = () => {
-			const response = window.fetch(endpoint)
-				.then((response) => response.json())
+			window.fetch(endpoint)
+				.then((response) => {
+					if (response.status > 399) {
+						throw new Error(`HTTP error! status: ${response.status}`);
+					}
+					return response.json();
+				})
 				.then((response) => {
 					setter({
 						...data,
 						...response,
-						fetched: true
+						fetched: true,
+						error: undefined
+					});
+				})
+				.catch((err) => {
+					console.error(err);
+					setter({
+						...data,
+						fetched: true,
+						error: err
 					});
 				});
 		};

@@ -9,10 +9,12 @@ export const doorState = atom({
 	key: 'door',
 	default: {
 		fetched: false,
+		error: undefined,
 		doorStatus: undefined,
 		isAutoOpenCloseEnabled: undefined,
 		openingTime: undefined,
-		closingTime: undefined
+		closingTime: undefined,
+		unresolvedFaults: [],
 	},
 });
 
@@ -22,7 +24,7 @@ const Door = () => {
 	const [isDoorControlsOpen, setDoorControlsOpen] = useState(false);
 
 	return (
-		<>
+		<div className="panel is-primary door">
 			<div className="panel-heading">Door</div>
 			<p className="panel-tabs">
 				<a 
@@ -59,7 +61,7 @@ const Door = () => {
 					<div className="open-time panel-block">Today's open time: { door.openingTime }a.m. to { door.closingTime }p.m.</div>
 				</>
 			) }
-		</>
+		</div>
 	);
 };
 

@@ -21,6 +21,7 @@ export const environmentState = atom({
 	key: 'environment',
 	default: {
 		fetched: false,
+		error: undefined,
 		loggingEnabled: undefined,
 		logEntries: {
 			temperature: [],
@@ -79,13 +80,13 @@ const Environment = () => {
 	});
 
 	return (
-		<>
+		<div className="panel is-warning environment">
 			<div className="panel-heading">Coop Environment</div>
 			<div className="panel-block temperature">
 				<div>
 					Temperature: { latestValues.temperature }°F
 				</div>
-				<XYPlot width={300} height={300} yDomain={[-10, 120]}>
+				<XYPlot width={300} height={150} yDomain={[-10, 120]}>
 					<HorizontalGridLines />
 					<VerticalGridLines tickValues={firstInDay.temperature} />
 					<LineSeries data={chartData.temperature} />
@@ -97,7 +98,7 @@ const Environment = () => {
 				<div>
 					Pressure: { latestValues.pressure } mb
 				</div>
-				<XYPlot width={300} height={300} yDomain={[970, 1040]}>
+				<XYPlot width={300} height={150} yDomain={[970, 1040]}>
 					<HorizontalGridLines />
 					<VerticalGridLines tickValues={firstInDay.pressure} />
 					<LineSeries data={chartData.pressure} />
@@ -109,7 +110,7 @@ const Environment = () => {
 				<div>
 					Humidity: { latestValues.humidity }%
 				</div>
-				<XYPlot width={300} height={300} yDomain={[0, 100]}>
+				<XYPlot width={300} height={150} yDomain={[0, 100]}>
 					<HorizontalGridLines />
 					<VerticalGridLines tickValues={firstInDay.humidity} />
 					<LineSeries data={chartData.humidity} />
@@ -121,7 +122,7 @@ const Environment = () => {
 				<div>
 					Gas: { latestValues.gas } kOhms
 				</div>
-				<XYPlot width={300} height={300} yDomain={[0, 200]}>
+				<XYPlot width={300} height={150} yDomain={[0, 300]}>
 					<HorizontalGridLines />
 					<VerticalGridLines tickValues={firstInDay.gas} />
 					<LineSeries data={chartData.gas} />
@@ -129,7 +130,7 @@ const Environment = () => {
 					<YAxis />
 				</XYPlot>
 			</div>
-		</>
+		</div>
 	);
 };
 

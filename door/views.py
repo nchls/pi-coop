@@ -2,9 +2,12 @@ import logging
 
 from datetime import timedelta
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse, JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
-from door.models import Config
+from door.models import Config, Fault
 from door.tasks import (
 	is_door_open, 
 	is_door_closed, 
@@ -34,6 +37,11 @@ def status(request):
 
 	cfg = Config.get_solo()
 
+	if request.user.is_staff:
+		unresolved_faults = Fault.objects.filter(is_resolved=False)
+	else:
+		unresolved_faults = []
+
 	sunrise_dtm, sunset_dtm = get_sunrise_sunset_times()
 	opening_time = sunrise_dtm + DELTA_FROM_SUNRISE
 	closing_time = sunset_dtm + DELTA_FROM_SUNSET
@@ -43,6 +51,7 @@ def status(request):
 		'isAutoOpenCloseEnabled': cfg.is_auto_open_close_enabled,
 		'openingTime': opening_time.strftime('%-I:%M'),
 		'closingTime': closing_time.strftime('%-I:%M'),
+		'unresolvedFaults': list((fault.id, fault.created.astimezone(), fault.message) for fault in unresolved_faults),
 	})
 
 @staff_member_required
@@ -80,4 +89,18 @@ def motor_off(request):
 		'success': True,
 	})
 
-
+@staff_member_required
+@csrf_exempt
+@require_POST
+def resolve_fault(request, id):
+	try:
+		fault = Fault.objects.get(id=id)
+	except ObjectDoesNotExist:
+		log.warning(f'Attempted to resolve nonexistent fault (id {id})')
+		return HttpResponseBadRequest()
+	fault.is_resolved = True
+	fault.save()
+	log.info(f'Resolved fault {id}')
+	return JsonResponse({
+		'success': True,
+	})
