@@ -25,11 +25,21 @@ const Pi = () => {
 	return (
 		<div className="panel is-link pi">
 			<div className="panel-heading">Pi</div>
-			<div className="panel-block temperature">Temperature: { pi.temperatureFahrenheit }°F</div>
-			<div className="panel-block uptime">Uptime: { pi.uptime }</div>
-			<div className="panel-block memory-percent">Memory usage: { pi.memoryPercent }%</div>
-			<div className="panel-block swap-percent">Swap usage: { pi.swapPercent }%</div>
-			<div className="panel-block load-averages">Load: { pi.loadAverages + '' }</div>
+			<div className="panel-block temperature">
+				<span className="key">Temperature:</span>&nbsp;<span className="value">{ pi.temperatureFahrenheit }°F</span>
+			</div>
+			<div className="panel-block uptime">
+				<span className="key">Uptime:</span>&nbsp;<span className="value">{ pi.uptime }</span>
+			</div>
+			<div className="panel-block memory-percent">
+				<span className="key">Memory usage:</span>&nbsp;<span className="value">{ pi.memoryPercent }%</span>
+			</div>
+			<div className="panel-block swap-percent">
+				<span className="key">Swap usage:</span>&nbsp;<span className="value">{ pi.swapPercent }%</span>
+			</div>
+			<div className="panel-block load-averages">
+				<span className="key">Load:</span>&nbsp;<span className="value">{ pi.loadAverages + '' }</span>
+			</div>
 		</div>
 	);
 };

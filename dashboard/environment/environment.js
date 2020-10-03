@@ -1,6 +1,14 @@
 import React from 'react';
 import { getDay, getUnixTime, fromUnixTime, parseISO } from 'date-fns';
-import { XYPlot, XAxis, YAxis, HorizontalGridLines, VerticalGridLines, LineSeries } from 'react-vis';
+import { 
+	FlexibleWidthXYPlot, 
+	XAxis, 
+	YAxis, 
+	HorizontalGridLines,
+	VerticalGridLines, 
+	LineSeries, 
+	GradientDefs 
+} from 'react-vis';
 import { atom, useRecoilValue } from 'recoil';
 
 import { useAPIPoll } from '../app/utils';
@@ -44,7 +52,7 @@ const Environment = () => {
 			accumulator[0][property] = environment.logEntries[property][0][0];
 			let val = environment.logEntries[property][environment.logEntries[property].length - 1][1];
 			if (property === 'gas') {
-				val /= 1000;
+				val = (val / 1000).toFixed(2);
 			}
 			accumulator[1][property] = val;
 		}
@@ -84,51 +92,51 @@ const Environment = () => {
 			<div className="panel-heading">Coop Environment</div>
 			<div className="panel-block temperature">
 				<div>
-					Temperature: { latestValues.temperature }°F
+					<span className="key">Temperature:</span> <span className="value">{ latestValues.temperature }°F</span>
 				</div>
-				<XYPlot width={300} height={150} yDomain={[-10, 120]}>
-					<HorizontalGridLines />
+				<FlexibleWidthXYPlot height={150} yDomain={[-10, 120]}>
+  					<HorizontalGridLines />
 					<VerticalGridLines tickValues={firstInDay.temperature} />
 					<LineSeries data={chartData.temperature} />
 					<XAxis tickFormat={v => weekdays[getDay(fromUnixTime(v))]} tickValues={firstInDay.temperature} />
 					<YAxis />
-				</XYPlot>
+				</FlexibleWidthXYPlot>
 			</div>
 			<div className="panel-block pressure">
 				<div>
-					Pressure: { latestValues.pressure } mb
+					<span className="key">Pressure:</span> <span className="value">{ latestValues.pressure } mb</span>
 				</div>
-				<XYPlot width={300} height={150} yDomain={[970, 1040]}>
+				<FlexibleWidthXYPlot height={150} yDomain={[970, 1040]}>
 					<HorizontalGridLines />
 					<VerticalGridLines tickValues={firstInDay.pressure} />
 					<LineSeries data={chartData.pressure} />
 					<XAxis tickFormat={v => weekdays[getDay(fromUnixTime(v))]} tickValues={firstInDay.pressure} />
 					<YAxis />
-				</XYPlot>
+				</FlexibleWidthXYPlot>
 			</div>
 			<div className="panel-block humidity">
 				<div>
-					Humidity: { latestValues.humidity }%
+					<span className="key">Humidity:</span> <span className="value">{ latestValues.humidity }%</span>
 				</div>
-				<XYPlot width={300} height={150} yDomain={[0, 100]}>
+				<FlexibleWidthXYPlot height={150} yDomain={[0, 100]}>
 					<HorizontalGridLines />
 					<VerticalGridLines tickValues={firstInDay.humidity} />
 					<LineSeries data={chartData.humidity} />
 					<XAxis tickFormat={v => weekdays[getDay(fromUnixTime(v))]} tickValues={firstInDay.humidity} />
 					<YAxis />
-				</XYPlot>
+				</FlexibleWidthXYPlot>
 			</div>
 			<div className="panel-block gas">
 				<div>
-					Gas: { latestValues.gas } kOhms
+					<span className="key">Gas:</span> <span className="value">{ latestValues.gas } kOhms</span>
 				</div>
-				<XYPlot width={300} height={150} yDomain={[0, 300]}>
+				<FlexibleWidthXYPlot height={150} yDomain={[0, 400]}>
 					<HorizontalGridLines />
 					<VerticalGridLines tickValues={firstInDay.gas} />
 					<LineSeries data={chartData.gas} />
 					<XAxis tickFormat={v => weekdays[getDay(fromUnixTime(v))]} tickValues={firstInDay.gas} />
 					<YAxis />
-				</XYPlot>
+				</FlexibleWidthXYPlot>
 			</div>
 		</div>
 	);

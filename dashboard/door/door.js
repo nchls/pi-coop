@@ -23,6 +23,10 @@ const Door = () => {
 	const [door, setDoor] = useRecoilState(doorState);
 	const [isDoorControlsOpen, setDoorControlsOpen] = useState(false);
 
+	const doorAction = (action) => {
+		window.fetch(`/door/${action}/`, {method: 'POST'});
+	};
+
 	return (
 		<div className="panel is-primary door">
 			<div className="panel-heading">Door</div>
@@ -43,22 +47,37 @@ const Door = () => {
 			{ isDoorControlsOpen ? (
 				<div className="door-controls panel-block">
 					<div className="buttons has-addons">
-						<button className="button is-info is-large">
+						<button 
+							className="button is-info is-large"
+							onClick={() => { doorAction('up') }}
+						>
 							☝️
 						</button>
-						<button className="button is-info is-large">
+						<button 
+							className="button is-info is-large"
+							onClick={() => { doorAction('down') }}
+						>
 							👇
 						</button>
-						<button className="button is-info is-large">
+						<button 
+							className="button is-info is-large"
+							onClick={() => { doorAction('off') }}
+						>
 							✋
 						</button>
 					</div>
 				</div>
 			) : (
 				<>
-					<div className="status panel-block">Status: { door.doorStatus }</div>
-					<div className="auto-open-close panel-block">Auto open+close: { door.isAutoOpenCloseEnabled ? 'Enabled' : 'Disabled' }</div>
-					<div className="open-time panel-block">Today's open time: { door.openingTime }a.m. to { door.closingTime }p.m.</div>
+					<div className="status panel-block">
+						<span className="key">Status:</span>&nbsp;<span className="value">{ door.doorStatus }</span>
+					</div>
+					<div className="auto-open-close panel-block">
+						<span className="key">Auto open+close:</span>&nbsp;<span className="value">{ door.isAutoOpenCloseEnabled ? 'Enabled' : 'Disabled' }</span>
+					</div>
+					<div className="open-time panel-block">
+						<span className="key">Today's open time:</span>&nbsp;<span className="value">{ door.openingTime }a.m. to { door.closingTime }p.m.</span>
+					</div>
 				</>
 			) }
 		</div>
