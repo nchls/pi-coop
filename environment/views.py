@@ -34,16 +34,28 @@ def log_entries(request):
 		'isEnvironmentLoggingEnabled': cfg.is_environment_logging_enabled,
 		'logEntries': {
 			'temperature': list(
-				(e.created.replace(tzinfo=timezone.utc).astimezone(), e.value) for e in temp_entries
+				(
+					e.created.replace(tzinfo=timezone.utc).astimezone(), 
+					e.value,
+				) for e in temp_entries
 			),
 			'pressure': list(
-				(e.created.replace(tzinfo=timezone.utc).astimezone(), e.value) for e in pres_entries
+				(
+					e.created.replace(tzinfo=timezone.utc).astimezone(), 
+					e.value,
+				) for e in pres_entries
 			),
 			'humidity': list(
-				(e.created.replace(tzinfo=timezone.utc).astimezone(), e.value) for e in humd_entries
+				(
+					e.created.replace(tzinfo=timezone.utc).astimezone(), 
+					e.value,
+				) for e in humd_entries
 			),
 			'gas': list(
-				(e.created.replace(tzinfo=timezone.utc).astimezone(), e.value) for e in voc_entries
+				(
+					e.created.replace(tzinfo=timezone.utc).astimezone(), 
+					e.value,
+				) for e in voc_entries
 			),
 		},
 	})

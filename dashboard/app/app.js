@@ -6,6 +6,7 @@ import Door from '../door/door';
 import Environment from '../environment/environment';
 import Faults from '../faults/faults';
 import Pi from '../pi/pi';
+import Camera from '../camera/camera';
 
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
 				<Door />
 				<Pi />
 				<Environment />
+				<Camera />
 			</main>
 		</RecoilRoot>
 	);

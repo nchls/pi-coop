@@ -6,7 +6,8 @@
   "scripts": {
     "start": "webpack-dev-server --config webpack.config.dev.js --watch",
     "build": "webpack --config webpack.config.prod.js",
-    "build:dev": "webpack --config webpack.config.dev.js --watch",
+    "build:dev": "webpack --config webpack.config.dev.js",
+    "build:dev-watch": "webpack --config webpack.config.dev.js --watch",
     "lint": "./node_modules/.bin/eslint dashboard --fix"
   },
   "repository": {

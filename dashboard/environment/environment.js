@@ -54,7 +54,7 @@ const Environment = () => {
 			if (property === 'gas') {
 				val = (val / 1000).toFixed(2);
 			}
-			accumulator[1][property] = val;
+			accumulator[1][property] = Math.round(val);
 		}
 		return accumulator;
 	}, [{}, {}]);
@@ -97,7 +97,7 @@ const Environment = () => {
 				<FlexibleWidthXYPlot height={150} yDomain={[-10, 120]}>
   					<HorizontalGridLines />
 					<VerticalGridLines tickValues={firstInDay.temperature} />
-					<LineSeries data={chartData.temperature} />
+					<LineSeries data={chartData.temperature} color="#a00" />
 					<XAxis tickFormat={v => weekdays[getDay(fromUnixTime(v))]} tickValues={firstInDay.temperature} />
 					<YAxis />
 				</FlexibleWidthXYPlot>
@@ -109,7 +109,7 @@ const Environment = () => {
 				<FlexibleWidthXYPlot height={150} yDomain={[970, 1040]}>
 					<HorizontalGridLines />
 					<VerticalGridLines tickValues={firstInDay.pressure} />
-					<LineSeries data={chartData.pressure} />
+					<LineSeries data={chartData.pressure} color="#808" />
 					<XAxis tickFormat={v => weekdays[getDay(fromUnixTime(v))]} tickValues={firstInDay.pressure} />
 					<YAxis />
 				</FlexibleWidthXYPlot>
@@ -121,19 +121,19 @@ const Environment = () => {
 				<FlexibleWidthXYPlot height={150} yDomain={[0, 100]}>
 					<HorizontalGridLines />
 					<VerticalGridLines tickValues={firstInDay.humidity} />
-					<LineSeries data={chartData.humidity} />
+					<LineSeries data={chartData.humidity} color="#00a" />
 					<XAxis tickFormat={v => weekdays[getDay(fromUnixTime(v))]} tickValues={firstInDay.humidity} />
 					<YAxis />
 				</FlexibleWidthXYPlot>
 			</div>
 			<div className="panel-block gas">
 				<div>
-					<span className="key">Gas:</span> <span className="value">{ latestValues.gas } kOhms</span>
+					<span className="key">Air quality:</span> <span className="value">{ latestValues.gas } kOhms</span>
 				</div>
 				<FlexibleWidthXYPlot height={150} yDomain={[0, 400]}>
 					<HorizontalGridLines />
 					<VerticalGridLines tickValues={firstInDay.gas} />
-					<LineSeries data={chartData.gas} />
+					<LineSeries data={chartData.gas} color="#0a0" />
 					<XAxis tickFormat={v => weekdays[getDay(fromUnixTime(v))]} tickValues={firstInDay.gas} />
 					<YAxis />
 				</FlexibleWidthXYPlot>

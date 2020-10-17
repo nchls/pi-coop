@@ -28,4 +28,7 @@ main {
 	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	column-gap: $global-padding;
 	row-gap: $global-padding;
+	.panel:last-child {
+		margin-bottom: 1.5rem;
+	}
 }
