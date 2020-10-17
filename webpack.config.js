@@ -7,7 +7,7 @@ module.exports = {
 		app: './dashboard/index.js',
 	},
 	output: {
-		path: path.resolve(__dirname, 'dashboard', 'dist'),
+		path: path.resolve(__dirname, 'static', 'dashboard'),
 		filename: 'bundle.js',
 	},
 	module: {

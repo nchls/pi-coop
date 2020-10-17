@@ -1,12 +1,14 @@
 __pycache__/
 *.py[cod]
 
-settings_secret.py
+settings_local.py
 *.sqlite3
 /static/*
 *.bsp
 task_output.txt
 dashboard/dist/*
+*.log
 
 .vscode
+*.code-workspace
 node_modules

@@ -1,6 +1,5 @@
 import django
 import logging
-import RPi.GPIO as gpio
 import time
 
 from datetime import datetime, timedelta, timezone
@@ -13,6 +12,10 @@ except (django.core.exceptions.AppRegistryNotReady, ModuleNotFoundError):
 	pass
 
 log = logging.getLogger(__name__)
+
+
+if not settings.DEMO_MODE:
+	import RPi.GPIO as gpio
 
 PIN_HALL_SENSOR_UPPER = 19
 PIN_HALL_SENSOR_LOWER = 20
@@ -38,6 +41,8 @@ def setup_gpio():
 
 def uses_gpio(fn):
 	def wrapper(*args, **kwargs):
+		if settings.DEMO_MODE:
+			return True
 		if gpio.getmode() is None:
 			setup_gpio()
 		return fn(*args, **kwargs)
@@ -160,7 +165,7 @@ def is_daytime():
 def get_sunrise_sunset_times():
 	pownal = api.Topos('43.921554 N', '70.147969 W')
 	ts = api.load.timescale(builtin=True)
-	eph = api.load_file('/home/pi/skyfield-data/de421.bsp')
+	eph = api.load_file(settings.SKYFIELD_DATA_PATH)
 	now = datetime.now().astimezone()
 	today_start = datetime(now.year, now.month, now.day).astimezone()
 	today_end = today_start + timedelta(days=1)

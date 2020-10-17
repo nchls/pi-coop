@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.conf import settings
 
 from door.models import Config, Fault
 from door.tasks import (
@@ -28,6 +29,15 @@ def index(request):
 	return HttpResponse('Door?')
 
 def status(request):
+	if settings.DEMO_MODE:
+		return JsonResponse({
+			'doorStatus': 'OPEN',
+			'isAutoOpenCloseEnabled': True,
+			'openingTime': '6:59a.m.',
+			'closingTime': '6:37p.m.',
+			'unresolvedFaults': [],
+		})
+	
 	if is_door_open():
 		door_status = 'OPEN'
 	elif is_door_closed():

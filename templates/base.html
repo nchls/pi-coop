@@ -1,12 +1,13 @@
+{% load static %}
 <!doctype html>
 <html>
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="initial-scale=1, width=device-width, shrink-to-fit=no">
 	<title>Coop!</title>
-    <link rel="stylesheet" href="/static/dashboard-dist/style.css">
-    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon"/>
-	<link rel="shortcut icon" href="/static/images/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="{% static "dashboard/style.css" %}">
+    <link rel="icon" href="{% static "images/favicon.ico" %}" type="image/x-icon"/>
+	<link rel="shortcut icon" href="{% static "images/favicon.ico" %}" type="image/x-icon"/>
 </head>
 <body>
 	{% block header %}{% endblock header %}
