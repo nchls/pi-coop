@@ -33,8 +33,8 @@ def status(request):
 		return JsonResponse({
 			'doorStatus': 'OPEN',
 			'isAutoOpenCloseEnabled': True,
-			'openingTime': '6:59a.m.',
-			'closingTime': '6:37p.m.',
+			'openingTime': '6:59',
+			'closingTime': '6:37',
 			'unresolvedFaults': [],
 		})
 	

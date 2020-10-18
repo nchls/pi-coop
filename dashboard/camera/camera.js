@@ -17,13 +17,15 @@ const Camera = () => {
 	useAPIPoll(cameraState, '/camera/ping', 60000);
 	const [isLoading, setIsLoading] = useState(true);
 
+	const innerSrc = window.jsData.demoMode ? '/static/closeup.jpg' : `${window.location.origin}:8081`;
+
 	return (
 		<div className="panel is-info camera">
 			<div className="panel-heading">Cameras</div>
 			<div className="panel-block inside">
 				<div className={`video-container ${isLoading ? 'loader' : ''}`}>
 					<img 
-						src={`${window.location.origin}:8081`} 
+						src={innerSrc} 
 						onLoad={() => { 
 							if (isLoading) { 
 								setIsLoading(false)

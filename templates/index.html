@@ -25,7 +25,8 @@
 {% block js %}
 	<script>
 		window.jsData = {
-			isAuthenticated: {% if user.is_authenticated %}true{% else %}false{% endif %}
+			isAuthenticated: {% if user.is_authenticated %}true{% else %}false{% endif %},
+			demoMode: {% if DEMO_MODE %}true{% else %}false{% endif %}
 		};
 	</script>
 	<script src="{% static "dashboard/bundle.js" %}"></script>
