@@ -72,19 +72,19 @@ def open_door():
 		while True:
 			time.sleep(SENSOR_RESOLUTION_SECONDS)
 			if (time.perf_counter() - start_time) > 4 and is_door_closed():
+				turn_off_motor()
 				msg = 'Door doesn\'t seem to be opening!'
 				Fault.objects.create(message=msg)
 				log.error(msg)
-				turn_off_motor()
 				return False
 			if (time.perf_counter() - start_time) > 45:
-				log.info('Completed door opening')
 				turn_off_motor()
+				log.info('Completed door opening')
 				return True
 	except Exception as exc:
+		turn_off_motor()
 		Fault.objects.create(message=f'Exception opening door! {exc}')
 		log.exception('Exception opening door!')
-		turn_off_motor()
 		return False
 
 
@@ -99,19 +99,19 @@ def close_door():
 		while True:
 			time.sleep(SENSOR_RESOLUTION_SECONDS)
 			if is_door_closed():
-				log.info(f'Completed door closing in {time.perf_counter() - start_time} seconds')
 				turn_off_motor()
+				log.info(f'Completed door closing in {time.perf_counter() - start_time} seconds')
 				return True
 			if (time.perf_counter() - start_time) > 42:
 				msg = 'Door did not trip lower sensor after 42 seconds!'
+				turn_off_motor()
 				Fault.objects.create(message=msg)
 				log.error(msg)
-				turn_off_motor()
 				return False
 	except Exception as exc:
+		turn_off_motor()
 		Fault.objects.create(message=f'Exception closing door! {exc}')
 		log.exception('Exception closing door!')
-		turn_off_motor()
 		return False
 
 

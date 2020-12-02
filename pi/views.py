@@ -5,7 +5,10 @@ from django.http import HttpResponse, JsonResponse
 from django.conf import settings
 
 
-locale.setlocale(locale.LC_ALL, 'USA')
+try:
+	locale.setlocale(locale.LC_ALL, 'USA')
+except Exception:
+	pass
 
 def get_pi_status(request):
 	temperature_fahrenheit, temperature_celsius = get_temperature()

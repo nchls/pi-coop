@@ -79,6 +79,7 @@ def close_door(request):
 	})
 
 @staff_member_required
+@csrf_exempt
 def motor_up(request):
 	set_motor_clockwise()
 	return JsonResponse({
@@ -86,6 +87,7 @@ def motor_up(request):
 	})
 
 @staff_member_required
+@csrf_exempt
 def motor_down(request):
 	set_motor_counterclockwise()
 	return JsonResponse({
@@ -93,6 +95,7 @@ def motor_down(request):
 	})
 
 @staff_member_required
+@csrf_exempt
 def motor_off(request):
 	turn_off_motor()
 	return JsonResponse({

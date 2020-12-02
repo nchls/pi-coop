@@ -22,29 +22,32 @@ const Door = () => {
 	useAPIPoll(doorState, '/door/status', 60000);
 	const [door, setDoor] = useRecoilState(doorState);
 	const [isDoorControlsOpen, setDoorControlsOpen] = useState(false);
+	const isAuthenticated = window.jsData.isAuthenticated;
 
 	const doorAction = (action) => {
-		window.fetch(`/door/${action}/`, {method: 'POST'});
+		window.fetch(`/door/${action}`, {method: 'POST'});
 	};
 
 	return (
 		<div className="panel is-primary door">
 			<div className="panel-heading">Door</div>
 			<p className="panel-tabs">
-				<a 
-					className={` ${isDoorControlsOpen ? '' : 'is-active'}`}
-					onClick={() => setDoorControlsOpen(false)}
-				>
-					Status
-				</a>
-				<a 
-					className={` ${isDoorControlsOpen ? 'is-active' : ''}`}
-					onClick={() => setDoorControlsOpen(true)}
-				>
-					Controls
-				</a>
+				{ isAuthenticated && <>
+					<a 
+						className={` ${isDoorControlsOpen ? '' : 'is-active'}`}
+						onClick={() => setDoorControlsOpen(false)}
+					>
+						Status
+					</a>
+					<a 
+						className={` ${isDoorControlsOpen ? 'is-active' : ''}`}
+						onClick={() => setDoorControlsOpen(true)}
+					>
+						Controls
+					</a>
+				</> }
 			</p>
-			{ isDoorControlsOpen ? (
+			{ isAuthenticated && isDoorControlsOpen ? (
 				<div className="door-controls panel-block">
 					<div className="buttons has-addons">
 						<button 

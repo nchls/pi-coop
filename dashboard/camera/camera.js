@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { atom } from 'recoil';
+import { atom, useRecoilValue } from 'recoil';
 
 import { useAPIPoll } from '../app/utils';
 import './camera.scss';
@@ -9,23 +9,24 @@ export const cameraState = atom({
 	key: 'camera',
 	default: {
 		fetched: false,
-		error: undefined
+		error: undefined,
+		serviceStarted: false
 	}
 });
 
 const Camera = () => {
-	useAPIPoll(cameraState, '/camera/ping', 60000);
+	useAPIPoll(cameraState, '/camera/ping', 10000);
 	const [isLoading, setIsLoading] = useState(true);
-
-	const innerSrc = window.jsData.demoMode ? '/static/closeup.jpg' : `${window.location.origin}:8081`;
+	const camera = useRecoilValue(cameraState);
 
 	return (
 		<div className="panel is-info camera">
 			<div className="panel-heading">Cameras</div>
 			<div className="panel-block inside">
-				<div className={`video-container ${isLoading ? 'loader' : ''}`}>
+				<div className="video-container">
+					{ isLoading && <div className="loader"/> }
 					<img 
-						src={innerSrc} 
+						src={`${window.location.origin}:8081?q=${Date.now()}`} 
 						onLoad={() => { 
 							if (isLoading) { 
 								setIsLoading(false)
@@ -38,6 +39,21 @@ const Camera = () => {
 							}
 						}}
 						alt="Inside coop camera"
+					/>
+					<img 
+						src={`${window.location.origin}:8082?q=${Date.now()}`} 
+						onLoad={() => { 
+							if (isLoading) { 
+								setIsLoading(false)
+							}
+						}}
+						onError={(err) => {
+							if (!isLoading) {
+								console.error(err);
+								setIsLoading(true);
+							}
+						}}
+						alt="Outside coop camera"
 					/>
 				</div>
 			</div>

@@ -10,8 +10,11 @@ class TextMessageAlertHandler(logging.Handler):
 			auth_token = settings.TWILIO_AUTH_TOKEN
 			client = Client(account_sid, auth_token)
 			for num in settings.ALERT_PHONE_NUMBERS:
-				message = client.messages.create(
-					body=f'Chicken coop alert: {record.getMessage()}',
-					from_='+12105985068',
-					to=num
-				)
+				try:
+					message = client.messages.create(
+						body=f'Chicken coop alert: {record.getMessage()}',
+						from_='+12105985068',
+						to=num
+					)
+				except:
+					pass
