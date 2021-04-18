@@ -15,6 +15,7 @@ export const doorState = atom({
 		openingTime: undefined,
 		closingTime: undefined,
 		unresolvedFaults: [],
+		faultState: false,
 	},
 });
 
@@ -27,6 +28,15 @@ const Door = () => {
 	const doorAction = (action) => {
 		window.fetch(`/door/${action}`, {method: 'POST'});
 	};
+
+	const autoOpenCloseState = (function() {
+		if (door.faultState) {
+			return 'Disabled (fault)';
+		} else if (door.isAutoOpenCloseEnabled) {
+			return 'Enabled';
+		}
+		return 'Disabled';
+	}());
 
 	return (
 		<div className="panel is-primary door">
@@ -76,7 +86,7 @@ const Door = () => {
 						<span className="key">Status:</span>&nbsp;<span className="value">{ door.doorStatus }</span>
 					</div>
 					<div className="auto-open-close panel-block">
-						<span className="key">Auto open+close:</span>&nbsp;<span className="value">{ door.isAutoOpenCloseEnabled ? 'Enabled' : 'Disabled' }</span>
+						<span className="key">Auto open+close:</span>&nbsp;<span className="value">{ autoOpenCloseState }</span>
 					</div>
 					<div className="open-time panel-block">
 						<span className="key">Today's open time:</span>&nbsp;<span className="value">{ door.openingTime }a.m. to { door.closingTime }p.m.</span>

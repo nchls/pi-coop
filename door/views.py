@@ -47,10 +47,9 @@ def status(request):
 
 	cfg = Config.get_solo()
 
-	if request.user.is_staff:
-		unresolved_faults = Fault.objects.filter(is_resolved=False)
-	else:
-		unresolved_faults = []
+	unresolved_faults = Fault.objects.filter(is_resolved=False)
+	staff_faults = unresolved_faults if request.user.is_staff else []
+	fault_state = bool(unresolved_faults)
 
 	sunrise_dtm, sunset_dtm = get_sunrise_sunset_times()
 	opening_time = sunrise_dtm + DELTA_FROM_SUNRISE
@@ -61,7 +60,8 @@ def status(request):
 		'isAutoOpenCloseEnabled': cfg.is_auto_open_close_enabled,
 		'openingTime': opening_time.strftime('%-I:%M'),
 		'closingTime': closing_time.strftime('%-I:%M'),
-		'unresolvedFaults': list((fault.id, fault.created.astimezone(), fault.message) for fault in unresolved_faults),
+		'unresolvedFaults': list((fault.id, fault.created.astimezone(), fault.message) for fault in staff_faults),
+		'faultState': fault_state,
 	})
 
 @staff_member_required
