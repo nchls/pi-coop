@@ -2,10 +2,14 @@ import os
 
 SECRET_KEY = 'secret secrets'
 
-ALERT_PHONE_NUMBERS = ()
+ALERT_EMAIL_ADDRESSES = (
+	'ian@nchls.com',
+)
 
-TWILIO_ACCOUNT_SID = 'foo'
-TWILIO_AUTH_TOKEN = 'bar'
+SMTP_SERVER = 'smtp.gmail.com'
+SMTP_PORT = 587
+GMAIL_USERNAME = 'coopalerts@gmail.com'
+GMAIL_PASSWORD = 'hunter2'
 
 DEMO_MODE = True
 
@@ -35,16 +39,16 @@ LOGGING = {
 			'filename': '/dev/pi-coop/coop.log',
 			'formatter': 'verbose',
 		},
-		'sms': {
+		'email': {
 			'level': 'ERROR',
-			'class': 'coop.alerts.TextMessageAlertHandler',
+			'class': 'coop.alerts.EmailAlertHandler',
 		},
 	},
 	'root': {
 		'handlers': [
 			'console',
 			'file',
-			'sms',
+			'email',
 		],
 		'level': 'INFO',
 	},

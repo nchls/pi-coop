@@ -54,6 +54,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'coop.urls'
 
+LOG_FILE = '/var/log/coop/coop.log'
 LOGGING = {
 	'version': 1,
 	'disable_existing_loggers': False,
@@ -75,19 +76,19 @@ LOGGING = {
 		'file': {
 			'level': 'INFO',
 			'class': 'logging.FileHandler',
-			'filename': '/var/log/coop/coop.log',
+			'filename': LOG_FILE,
 			'formatter': 'verbose',
 		},
-		'sms': {
+		'email': {
 			'level': 'ERROR',
-			'class': 'coop.alerts.TextMessageAlertHandler',
+			'class': 'coop.alerts.EmailAlertHandler',
 		},
 	},
 	'root': {
 		'handlers': [
 			'console',
 			'file',
-			'sms',
+			'email',
 		],
 		'level': 'INFO',
 	},
