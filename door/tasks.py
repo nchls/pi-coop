@@ -71,7 +71,7 @@ def open_door():
 		start_time = time.perf_counter()
 		while True:
 			time.sleep(SENSOR_RESOLUTION_SECONDS)
-			if (time.perf_counter() - start_time) > 4 and is_door_closed():
+			if (time.perf_counter() - start_time) > 7 and is_door_closed():
 				turn_off_motor()
 				msg = 'Door doesn\'t seem to be opening!'
 				Fault.objects.create(message=msg)

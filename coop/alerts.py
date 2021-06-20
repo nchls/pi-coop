@@ -28,7 +28,7 @@ class EmailAlertHandler(logging.Handler):
 
 					session.sendmail(settings.GMAIL_USERNAME, email, headers + "\r\n\r\n" + f'Chicken coop alert: {record.getMessage()}')
 
-					session.quit()
+				session.quit()
 
 			except Exception as exc:
 				log.warning('Failed to send alert emails!')
