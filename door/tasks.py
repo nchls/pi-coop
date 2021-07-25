@@ -24,7 +24,6 @@ PIN_MOTOR_INPUT_1 = 6
 PIN_MOTOR_INPUT_2 = 22
 
 SENSOR_RESOLUTION_SECONDS = 0.2
-MAX_DOOR_OPENING_SECONDS = 60
 DELTA_FROM_SUNRISE = timedelta(minutes=-8)
 DELTA_FROM_SUNSET = timedelta(minutes=45)
 
@@ -77,7 +76,7 @@ def open_door():
 				Fault.objects.create(message=msg)
 				log.error(msg)
 				return False
-			if (time.perf_counter() - start_time) > 45:
+			if (time.perf_counter() - start_time) > 33:
 				turn_off_motor()
 				log.info('Completed door opening')
 				return True
