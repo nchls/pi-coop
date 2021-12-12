@@ -25,10 +25,6 @@ def log_entries(request):
 		type=LogEntry.HUMIDITY,
 		created__gte=start_time
 	).order_by('created')
-	voc_entries = LogEntry.objects.filter(
-		type=LogEntry.VOC,
-		created__gte=start_time
-	).order_by('created')
 
 	return JsonResponse({
 		'isEnvironmentLoggingEnabled': cfg.is_environment_logging_enabled,
@@ -50,12 +46,6 @@ def log_entries(request):
 					e.created.replace(tzinfo=timezone.utc).astimezone(), 
 					e.value,
 				) for e in humd_entries
-			),
-			'gas': list(
-				(
-					e.created.replace(tzinfo=timezone.utc).astimezone(), 
-					e.value,
-				) for e in voc_entries
 			),
 		},
 	})

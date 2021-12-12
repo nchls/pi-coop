@@ -35,7 +35,6 @@ export const environmentState = atom({
 			temperature: [],
 			pressure: [],
 			humidity: [],
-			gas: [],
 		}
 	}
 });
@@ -44,16 +43,13 @@ const Environment = () => {
 	useAPIPoll(environmentState, '/environment/logs', 60000 * 10);
 	const environment = useRecoilValue(environmentState);
 
-	const [earliestTimes, latestValues] = ['temperature', 'pressure', 'humidity', 'gas'].reduce((accumulator, property) => {
+	const [earliestTimes, latestValues] = ['temperature', 'pressure', 'humidity'].reduce((accumulator, property) => {
 		if (environment.logEntries[property].length === 0) {
 			accumulator[0][property] = undefined;
 			accumulator[1][property] = undefined;
 		} else {
 			accumulator[0][property] = environment.logEntries[property][0][0];
 			let val = environment.logEntries[property][environment.logEntries[property].length - 1][1];
-			if (property === 'gas') {
-				val = (val / 1000).toFixed(2);
-			}
 			accumulator[1][property] = Math.round(val);
 		}
 		return accumulator;
@@ -64,9 +60,8 @@ const Environment = () => {
 		'temperature': [],
 		'pressure': [],
 		'humidity': [],
-		'gas': [],
 	};
-	['temperature', 'pressure', 'humidity', 'gas'].forEach((property) => {
+	['temperature', 'pressure', 'humidity'].forEach((property) => {
 		const entries = environment.logEntries[property];
 		let previousDay = getDay(parseISO(earliestTimes[property]));
 		chartData[property] = entries.map((entry) => {
@@ -77,9 +72,6 @@ const Environment = () => {
 				previousDay = getDay(dt);
 			}
 			let val = entry[1];
-			if (property === 'gas') {
-				val /= 1000;
-			}
 			return {
 				x: ts,
 				y: val
@@ -123,18 +115,6 @@ const Environment = () => {
 					<VerticalGridLines tickValues={firstInDay.humidity} />
 					<LineSeries data={chartData.humidity} color="#00a" />
 					<XAxis tickFormat={v => weekdays[getDay(fromUnixTime(v))]} tickValues={firstInDay.humidity} />
-					<YAxis />
-				</FlexibleWidthXYPlot>
-			</div>
-			<div className="panel-block gas">
-				<div>
-					<span className="key">Air quality:</span> <span className="value">{ latestValues.gas } kOhms</span>
-				</div>
-				<FlexibleWidthXYPlot height={150} yDomain={[0, 400]}>
-					<HorizontalGridLines />
-					<VerticalGridLines tickValues={firstInDay.gas} />
-					<LineSeries data={chartData.gas} color="#0a0" />
-					<XAxis tickFormat={v => weekdays[getDay(fromUnixTime(v))]} tickValues={firstInDay.gas} />
 					<YAxis />
 				</FlexibleWidthXYPlot>
 			</div>

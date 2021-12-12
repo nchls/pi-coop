@@ -76,7 +76,7 @@ def open_door():
 				Fault.objects.create(message=msg)
 				log.error(msg)
 				return False
-			if (time.perf_counter() - start_time) > 33:
+			if (time.perf_counter() - start_time) > 28:
 				turn_off_motor()
 				log.info('Completed door opening')
 				return True
@@ -101,8 +101,8 @@ def close_door():
 				turn_off_motor()
 				log.info(f'Completed door closing in {time.perf_counter() - start_time} seconds')
 				return True
-			if (time.perf_counter() - start_time) > 42:
-				msg = 'Door did not trip lower sensor after 42 seconds!'
+			if (time.perf_counter() - start_time) > 35:
+				msg = 'Door did not trip lower sensor after 35 seconds!'
 				turn_off_motor()
 				Fault.objects.create(message=msg)
 				log.error(msg)
