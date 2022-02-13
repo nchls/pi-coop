@@ -1,4 +1,4 @@
-Django==3.2.10
+Django==3.2.12
 django-solo==1.2.0
 RPi.GPIO==0.7.0
 skyfield==1.22
