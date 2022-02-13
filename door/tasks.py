@@ -1,6 +1,7 @@
 import django
 import logging
 import time
+import os
 
 from datetime import datetime, timedelta, timezone
 from django.conf import settings
@@ -54,10 +55,18 @@ def job():
 		return False
 	if Fault.objects.filter(is_resolved=False).first() is not None:
 		return False
+	if pi_has_just_started():
+		return False
 	if is_door_closed() and is_daytime():
 		return open_door()
 	if is_door_open() and not is_daytime():
 		return close_door()
+
+
+def pi_has_just_started():
+	uptime = os.popen('tail /proc/uptime').readline().split()[0]
+	uptime_minutes = float(uptime) / 60
+	return uptime_minutes < 5
 
 
 def open_door():
