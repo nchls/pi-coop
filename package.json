@@ -43,7 +43,7 @@
     "react-dom": "^16.13.1",
     "react-vis": "^1.11.7",
     "recoil": "0.0.13",
-    "sass-loader": "^10.0.2",
+    "sass-loader": "^10.2.1",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
