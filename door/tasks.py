@@ -24,8 +24,8 @@ PIN_MOTOR_LOGIC = 27
 PIN_MOTOR_INPUT_1 = 6
 PIN_MOTOR_INPUT_2 = 22
 
-SENSOR_RESOLUTION_SECONDS = 0.2
-DELTA_FROM_SUNRISE = timedelta(minutes=-8)
+SENSOR_RESOLUTION_SECONDS = 0.5
+DELTA_FROM_SUNRISE = timedelta(minutes=0)
 DELTA_FROM_SUNSET = timedelta(minutes=45)
 
 
@@ -79,7 +79,7 @@ def open_door():
 		start_time = time.perf_counter()
 		while True:
 			time.sleep(SENSOR_RESOLUTION_SECONDS)
-			if (time.perf_counter() - start_time) > 7 and is_door_closed():
+			if (time.perf_counter() - start_time) > 4 and is_door_closed():
 				turn_off_motor()
 				msg = 'Door doesn\'t seem to be opening!'
 				Fault.objects.create(message=msg)
@@ -159,7 +159,12 @@ def is_magnet_at_upper_sensor():
 
 @uses_gpio
 def is_magnet_at_lower_sensor():
-	return (gpio.input(PIN_HALL_SENSOR_LOWER) == 0)
+	if gpio.input(PIN_HALL_SENSOR_LOWER) == 0:
+		return True
+	falling = gpio.wait_for_edge(PIN_HALL_SENSOR_LOWER, gpio.FALLING, timeout=200)
+	if falling is not None:
+		return True
+	return False
 
 
 def is_daytime():
