@@ -48,7 +48,6 @@ LOGGING = {
 		'handlers': [
 			'console',
 			'file',
-			'email',
 		],
 		'level': 'INFO',
 	},
