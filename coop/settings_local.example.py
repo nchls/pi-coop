@@ -6,10 +6,11 @@ ALERT_EMAIL_ADDRESSES = (
 	'ian@nchls.com',
 )
 
-SMTP_SERVER = 'smtp.gmail.com'
-SMTP_PORT = 587
-GMAIL_USERNAME = 'coopalerts@gmail.com'
-GMAIL_PASSWORD = 'hunter2'
+ALERT_SMTP_SERVER = 'smtp.gmail.com'
+ALERT_SMTP_PORT = 587
+ALERT_EMAIL_USERNAME = 'coopalerts'
+ALERT_SENDER_EMAIL_ADDRESS = 'coopalerts@gmail.com'
+ALERT_EMAIL_PASSWORD = 'hunter2'
 
 DEMO_MODE = True
 
@@ -48,6 +49,7 @@ LOGGING = {
 		'handlers': [
 			'console',
 			'file',
+			'email',
 		],
 		'level': 'INFO',
 	},
