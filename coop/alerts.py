@@ -9,16 +9,16 @@ class EmailAlertHandler(logging.Handler):
 	def emit(self, record):
 		if not settings.DEMO_MODE:
 			try:
-				session = smtplib.SMTP(settings.SMTP_SERVER, settings.SMTP_PORT)
+				session = smtplib.SMTP(settings.ALERT_SMTP_SERVER, settings.ALERT_SMTP_PORT)
 				session.ehlo()
 				session.starttls()
 				session.ehlo()
 
-				session.login(settings.GMAIL_USERNAME, settings.GMAIL_PASSWORD)
+				session.login(settings.ALERT_EMAIL_USERNAME, settings.ALERT_EMAIL_PASSWORD)
 
 				for email in settings.ALERT_EMAIL_ADDRESSES:
 					headers = [
-						"From: " + settings.GMAIL_USERNAME, 
+						"From: " + settings.ALERT_EMAIL_USERNAME, 
 						"Subject: Chicken coop alert!", 
 						"To: " + email,
 						"MIME-Version: 1.0", 
@@ -26,7 +26,7 @@ class EmailAlertHandler(logging.Handler):
 					]
 					headers = "\r\n".join(headers)
 
-					session.sendmail(settings.GMAIL_USERNAME, email, headers + "\r\n\r\n" + f'Chicken coop alert: {record.getMessage()}')
+					session.sendmail(settings.ALERT_EMAIL_USERNAME, email, headers + "\r\n\r\n" + f'Chicken coop alert: {record.getMessage()}')
 
 				session.quit()
 
