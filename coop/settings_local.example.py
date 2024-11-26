@@ -8,7 +8,8 @@ ALERT_EMAIL_ADDRESSES = (
 
 ALERT_SMTP_SERVER = 'smtp.gmail.com'
 ALERT_SMTP_PORT = 587
-ALERT_EMAIL_USERNAME = 'coopalerts@gmail.com'
+ALERT_EMAIL_USERNAME = 'coopalerts'
+ALERT_SENDER_EMAIL_ADDRESS = 'coopalerts@gmail.com'
 ALERT_EMAIL_PASSWORD = 'hunter2'
 
 DEMO_MODE = True

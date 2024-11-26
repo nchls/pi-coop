@@ -18,7 +18,7 @@ class EmailAlertHandler(logging.Handler):
 
 				for email in settings.ALERT_EMAIL_ADDRESSES:
 					headers = [
-						"From: " + settings.ALERT_EMAIL_USERNAME, 
+						"From: " + settings.ALERT_SENDER_EMAIL_ADDRESS, 
 						"Subject: Chicken coop alert!", 
 						"To: " + email,
 						"MIME-Version: 1.0", 
@@ -26,7 +26,7 @@ class EmailAlertHandler(logging.Handler):
 					]
 					headers = "\r\n".join(headers)
 
-					session.sendmail(settings.ALERT_EMAIL_USERNAME, email, headers + "\r\n\r\n" + f'Chicken coop alert: {record.getMessage()}')
+					session.sendmail(settings.ALERT_SENDER_EMAIL_ADDRESS, email, headers + "\r\n\r\n" + f'Chicken coop alert: {record.getMessage()}')
 
 				session.quit()
 
