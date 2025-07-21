@@ -1,6 +1,5 @@
-Django==3.2.19
+Django==3.2.25
 django-solo==1.2.0
 RPi.GPIO==0.7.0
 skyfield==1.22
-twilio==6.44.0
 bme680==1.0.5
