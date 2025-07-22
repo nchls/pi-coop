@@ -1,0 +1,5 @@
+* * * * * cd /home/pi/coop && /home/pi/coop/door/task.sh >> /home/pi/coop/door/task_output.txt 2>&1
+# */10 * * * * cd /home/pi/coop && /home/pi/coop/environment/task.sh >> /home/pi/coop/environment/task_output.txt 2>&1
+* * * * * cd /home/pi/coop && /home/pi/coop/camera/task.sh >> /home/pi/coop/camera/task_output.txt 2>&1
+12 0 * * * rm -f /var/lib/motion/*.mkv 2>&1
+
