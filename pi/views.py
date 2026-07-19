@@ -37,7 +37,7 @@ def get_temperature():
 	if settings.DEMO_MODE:
 		return (Decimal('100'), Decimal('100'))
 	temperature_raw = os.popen('vcgencmd measure_temp').readline()
-	temperature_celsius = Decimal(re.sub('[^0-9\.]', '', temperature_raw))
+	temperature_celsius = Decimal(re.sub(r'[^0-9.]', '', temperature_raw))
 	temperature_fahrenheit = (Decimal(temperature_celsius) * 9/5) + 32
 	return (temperature_fahrenheit, temperature_celsius)
 
@@ -60,6 +60,6 @@ def get_memory_usage():
 def get_load_averages():
 	if settings.DEMO_MODE:
 		return '0.22,0.1,0.02'
-	load_averages_raw = os.popen("uptime  | grep -o '[0-9]\+\.[0-9]\+*'").readlines()
-	load_averages = [float(re.sub('[^0-9\.]', '', average_raw)) for average_raw in load_averages_raw]
+	load_averages_raw = os.popen(r"uptime  | grep -o '[0-9]\+\.[0-9]\+*'").readlines()
+	load_averages = [float(re.sub(r'[^0-9.]', '', average_raw)) for average_raw in load_averages_raw]
 	return load_averages

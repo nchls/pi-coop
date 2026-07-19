@@ -7,10 +7,18 @@ For more information on this file, see
 https://docs.djangoproject.com/en/3.0/howto/deployment/wsgi/
 """
 
-import os, sys
+import os
+import site
+import sys
 
-sys.path.append('/home/pi/coop/coop')
-sys.path.append('/home/pi/.local/lib/python3.7/site-packages')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
+
+try:
+	for package_path in site.getsitepackages():
+		sys.path.append(package_path)
+except AttributeError:
+	sys.path.append(site.getusersitepackages())
 
 from django.core.wsgi import get_wsgi_application
 

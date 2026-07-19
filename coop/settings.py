@@ -54,7 +54,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'coop.urls'
 
-LOG_FILE = '/var/log/coop/coop.log'
+LOG_FILE = os.path.join(BASE_DIR, 'logs', 'coop.log')
+os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
 LOGGING = {
 	'version': 1,
 	'disable_existing_loggers': False,
@@ -154,9 +155,9 @@ TIME_ZONE = 'America/New_York'
 
 USE_I18N = False
 
-USE_L10N = False
-
 USE_TZ = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -169,4 +170,7 @@ DEMO_MODE = False
 
 SKYFIELD_DATA_PATH = '/home/pi/skyfield-data/de421.bsp'
 
-from .settings_local import *
+try:
+	from .settings_local import *
+except ImportError:
+	pass
