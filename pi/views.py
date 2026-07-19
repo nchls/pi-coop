@@ -33,11 +33,30 @@ def get_log(request):
 	})
 
 
+def get_temperature_from_sysfs():
+	for thermal_path in (
+		'/sys/class/thermal/thermal_zone0/temp',
+		'/sys/class/thermal/thermal_zone1/temp',
+		'/sys/class/thermal/thermal_zone2/temp',
+	):
+		if not os.path.exists(thermal_path):
+			continue
+		try:
+			with open(thermal_path) as thermal_file:
+				temperature_raw = thermal_file.readline().strip()
+			temperature_celsius = Decimal(temperature_raw) / Decimal('1000')
+			return temperature_celsius
+		except (OSError, ValueError):
+			continue
+	return None
+
+
 def get_temperature():
 	if settings.DEMO_MODE:
 		return (Decimal('100'), Decimal('100'))
-	temperature_raw = os.popen('vcgencmd measure_temp').readline()
-	temperature_celsius = Decimal(re.sub(r'[^0-9.]', '', temperature_raw))
+	temperature_celsius = get_temperature_from_sysfs()
+	if temperature_celsius is None:
+		raise RuntimeError('No Pi thermal sysfs source available')
 	temperature_fahrenheit = (Decimal(temperature_celsius) * 9/5) + 32
 	return (temperature_fahrenheit, temperature_celsius)
 
