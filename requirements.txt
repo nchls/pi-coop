@@ -1,5 +1,5 @@
 Django==6.0.7
 django-solo==2.5.1
-RPi.GPIO==0.7.1
+gpiod==2.5.0
 skyfield==1.54
 bme680==2.0.0

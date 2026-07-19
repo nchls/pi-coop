@@ -6,6 +6,18 @@ import os
 from datetime import datetime, timedelta, timezone
 from django.conf import settings
 from skyfield import almanac, api
+
+try:
+	import gpiod
+	from gpiod import line
+	from gpiod.line import Bias, Direction, Edge, Value
+	from gpiod.line_settings import LineSettings
+except ImportError:
+	gpiod = None
+	line = None
+	Bias = Direction = Edge = Value = None
+	LineSettings = None
+
 try:
 	# This will work when the functions are imported from a Django module, but not when the script is run
 	from door.models import Config, State, Fault
@@ -15,8 +27,47 @@ except (django.core.exceptions.AppRegistryNotReady, ModuleNotFoundError):
 log = logging.getLogger(__name__)
 
 
-if not settings.DEMO_MODE:
-	import RPi.GPIO as gpio
+class GPIOController:
+	def __init__(self):
+		self.request = None
+		self._configured = False
+
+	def setup(self):
+		if self.request is not None or gpiod is None:
+			return
+		config = {
+			PIN_HALL_SENSOR_UPPER: LineSettings(direction=Direction.INPUT, bias=Bias.PULL_UP),
+			PIN_HALL_SENSOR_LOWER: LineSettings(direction=Direction.INPUT, bias=Bias.PULL_UP, edge_detection=Edge.FALLING),
+			PIN_MOTOR_LOGIC: LineSettings(direction=Direction.OUTPUT, output_value=Value.INACTIVE),
+			PIN_MOTOR_INPUT_1: LineSettings(direction=Direction.OUTPUT, output_value=Value.INACTIVE),
+			PIN_MOTOR_INPUT_2: LineSettings(direction=Direction.OUTPUT, output_value=Value.INACTIVE),
+		}
+		self.request = gpiod.request_lines('/dev/gpiochip0', config=config, consumer='pi-coop')
+		self._configured = True
+
+	def getmode(self):
+		return 0 if self.request is not None else None
+
+	def input(self, pin):
+		self.setup()
+		if self.request is None:
+			return 0
+		return int(self.request.get_value(pin) == Value.ACTIVE)
+
+	def output(self, pin, value):
+		self.setup()
+		if self.request is None:
+			return
+		self.request.set_value(pin, Value.ACTIVE if value else Value.INACTIVE)
+
+	def wait_for_edge(self, pin, edge, timeout=200):
+		self.setup()
+		if self.request is None:
+			return None
+		return self.request.wait_edge_events(timeout=timeout/1000)
+
+
+gpio = GPIOController()
 
 PIN_HALL_SENSOR_UPPER = 19
 PIN_HALL_SENSOR_LOWER = 20
@@ -30,13 +81,7 @@ DELTA_FROM_SUNSET = timedelta(minutes=45)
 
 
 def setup_gpio():
-	gpio.setwarnings(False)
-	gpio.setmode(gpio.BCM)
-	gpio.setup(PIN_HALL_SENSOR_UPPER, gpio.IN, pull_up_down=gpio.PUD_UP)
-	gpio.setup(PIN_HALL_SENSOR_LOWER, gpio.IN, pull_up_down=gpio.PUD_UP)
-	gpio.setup(PIN_MOTOR_LOGIC, gpio.OUT)
-	gpio.setup(PIN_MOTOR_INPUT_1, gpio.OUT)
-	gpio.setup(PIN_MOTOR_INPUT_2, gpio.OUT)
+	gpio.setup()
 
 
 def uses_gpio(fn):
