@@ -44,8 +44,8 @@
     "recoil": "0.0.13",
     "sass": "^1.54.4",
     "sass-loader": "^10.2.1",
-    "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.3"
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
   }
 }
