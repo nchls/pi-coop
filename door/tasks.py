@@ -242,7 +242,19 @@ def is_daytime():
 def get_sunrise_sunset_times():
 	pownal = api.Topos('43.921554 N', '70.147969 W')
 	ts = api.load.timescale(builtin=True)
-	eph = api.load_file(settings.SKYFIELD_DATA_PATH)
+	# Ensure the ephemeris file exists; use Skyfield's Loader to download/cache it if missing
+	eph_path = settings.SKYFIELD_DATA_PATH
+	eph_dir = os.path.dirname(eph_path) or '.'
+	try:
+		os.makedirs(eph_dir, exist_ok=True)
+		# Loader caches files in the given directory and will download if necessary
+		loader = api.Loader(eph_dir)
+		eph_filename = os.path.basename(eph_path)
+		# This will return a loaded ephemeris, downloading the file when required
+		eph = loader(eph_filename)
+	except Exception as exc:
+		log.exception('Failed to load or download ephemeris %s: %s', eph_path, exc)
+		raise
 	now = datetime.now().astimezone()
 	today_start = datetime(now.year, now.month, now.day).astimezone()
 	today_end = today_start + timedelta(days=1)
