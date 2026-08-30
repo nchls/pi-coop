@@ -240,7 +240,7 @@ def is_daytime():
 
 
 def get_sunrise_sunset_times():
-	pownal = api.Topos('43.921554 N', '70.147969 W')
+	wilmot = api.Topos('43.450833 N', '71.913333 W')
 	ts = api.load.timescale(builtin=True)
 	# Ensure the ephemeris file exists; use Skyfield's Loader to download/cache it if missing
 	eph_path = settings.SKYFIELD_DATA_PATH
@@ -260,7 +260,7 @@ def get_sunrise_sunset_times():
 	today_end = today_start + timedelta(days=1)
 	today_start_ts = ts.utc(today_start)
 	today_end_ts = ts.utc(today_end)
-	traversals, is_sunrise = almanac.find_discrete(today_start_ts, today_end_ts, almanac.sunrise_sunset(eph, pownal))
+	traversals, is_sunrise = almanac.find_discrete(today_start_ts, today_end_ts, almanac.sunrise_sunset(eph, wilmot))
 	# If there are multiple sunrises in a day then we have bigger problems than opening the coop door at the right time
 	sunrise_iso = traversals[0].utc_iso() if is_sunrise[0] else traversals[1].utc_iso()
 	sunset_iso = traversals[1].utc_iso() if not is_sunrise[1] else traversals[0].utc_iso()
