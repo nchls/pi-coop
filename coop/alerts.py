@@ -7,7 +7,7 @@ log = logging.getLogger(__name__)
 
 class EmailAlertHandler(logging.Handler):
 	def emit(self, record):
-		if not settings.DEMO_MODE:
+		if settings.EMAIL_ALERTS_ENABLED:
 			try:
 				session = smtplib.SMTP(settings.ALERT_SMTP_SERVER, settings.ALERT_SMTP_PORT)
 				session.ehlo()

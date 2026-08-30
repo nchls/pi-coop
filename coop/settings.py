@@ -164,11 +164,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/home/pi/coop/static'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'staticfiles')]
 
 DEMO_MODE = False
-
-SKYFIELD_DATA_PATH = '/home/pi/skyfield-data/de421.bsp'
 
 try:
 	from .settings_local import *

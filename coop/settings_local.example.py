@@ -2,14 +2,14 @@ import os
 
 SECRET_KEY = 'secret secrets'
 
+EMAIL_ALERTS_ENABLED = True
 ALERT_EMAIL_ADDRESSES = (
-	'ian@nchls.com',
+	'ianmnicholas@gmail.com',
 )
-
-ALERT_SMTP_SERVER = 'smtp.gmail.com'
+ALERT_SMTP_SERVER = 'smtp.us.opalstack.com'
 ALERT_SMTP_PORT = 587
-ALERT_EMAIL_USERNAME = 'coopalerts'
-ALERT_SENDER_EMAIL_ADDRESS = 'coopalerts@gmail.com'
+ALERT_EMAIL_USERNAME = 'razorbillemail'
+ALERT_SENDER_EMAIL_ADDRESS = 'coopalerts@razorbill.dev'
 ALERT_EMAIL_PASSWORD = 'hunter2'
 
 DEMO_MODE = True

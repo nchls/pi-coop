@@ -31,6 +31,21 @@ class GPIOController:
 	def __init__(self):
 		self.request = None
 		self._configured = False
+		# RPi.GPIO-compatible constants for legacy code paths
+		try:
+			self.FALLING = Edge.FALLING
+			self.RISING = Edge.RISING
+			self.BOTH = Edge.BOTH
+		except Exception:
+			self.FALLING = None
+			self.RISING = None
+			self.BOTH = None
+		self.HIGH = 1
+		self.LOW = 0
+		self.IN = 0
+		self.OUT = 1
+		self.BCM = 'BCM'
+		self.PUD_UP = 'PUD_UP'
 
 	def setup(self):
 		if self.request is not None or gpiod is None:
@@ -52,7 +67,8 @@ class GPIOController:
 		self.setup()
 		if self.request is None:
 			return 0
-		return int(self.request.get_value(pin) == Value.ACTIVE)
+		val = self.request.get_value(pin)
+		return 1 if val == Value.ACTIVE else 0
 
 	def output(self, pin, value):
 		self.setup()
@@ -64,7 +80,10 @@ class GPIOController:
 		self.setup()
 		if self.request is None:
 			return None
-		return self.request.wait_edge_events(timeout=timeout/1000)
+		# gpiod expects seconds or timedelta; convert milliseconds to seconds
+		# Return True if an event occurred, None otherwise to mimic original usage
+		occurred = self.request.wait_edge_events(timeout=timeout/1000)
+		return occurred if occurred else None
 
 
 gpio = GPIOController()
