@@ -1,4 +1,4 @@
-Django==6.0.7
+Django==6.0.8
 django-solo==2.5.1
 gpiod==2.5.0
 skyfield==1.54
